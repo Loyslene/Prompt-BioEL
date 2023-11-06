@@ -29,7 +29,7 @@ def get_pretrained_model(pretrained_model, tokenizer, device, args):
     model = MaskLMEncoder(pretrained_model, tokenizer, device)
     state_dict = torch.load(args.pretrained_model_path) if device.type == 'cuda' else \
         torch.load(args.model, map_location=torch.device('cpu'))
-    model.load_state_dict(state_dict["sd"])
+    model.load_state_dict(state_dict["sd"], strict=False)
     return model.model.bert
 
 
@@ -41,7 +41,7 @@ def load_model(is_init, device, type_loss, args):
     if not is_init:
         state_dict = torch.load(args.model) if device.type == 'cuda' else \
             torch.load(args.model, map_location=torch.device('cpu'))
-        model.load_state_dict(state_dict['sd'])
+        model.load_state_dict(state_dict['sd'], strict=False)
     return model
 
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     parser.add_argument("--test_data", default="disambiguation_output/test.json")
     parser.add_argument("--kb_path", default="entity_kb.json")
 
-    parser.add_argument("--batch", default=16, type=int)
+    parser.add_argument("--batch", default=1, type=int)
     parser.add_argument("--cand_num", default=6)
     parser.add_argument("--seed", default=42, type=int)
 

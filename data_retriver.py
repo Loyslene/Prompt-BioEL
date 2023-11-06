@@ -189,8 +189,8 @@ def get_hard_negative(mention_embeddings, all_entity_embeds, k,
                       max_num_postives,
                       use_gpu_index=False):
     index = faiss.IndexFlatIP(all_entity_embeds.shape[1])
-    if use_gpu_index:
-        index = faiss.index_cpu_to_all_gpus(index)
+    # if use_gpu_index:
+    #     index = faiss.index_cpu_to_all_gpus(index)
     index.add(all_entity_embeds)
     scores, hard_indices = index.search(mention_embeddings,
                                         k + max_num_postives)

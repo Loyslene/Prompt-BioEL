@@ -295,9 +295,9 @@ if __name__ == '__main__':
     parser.add_argument("--test_data", default="disambiguation_output/test.json")
     parser.add_argument("--kb_path", default="entity_kb.json")
 
-    parser.add_argument("--batch", default=16,type=int)
+    parser.add_argument("--batch", default=1,type=int)
     parser.add_argument("--lr", default=5e-5, type=float)
-    parser.add_argument("--epochs", default=40,type=int)
+    parser.add_argument("--epochs", default=1,type=int)
     parser.add_argument("--cand_num", default=6)
     parser.add_argument("--warmup_proportion", default=0.2)
     parser.add_argument("--weight_decay", default=0.01)
@@ -308,7 +308,7 @@ if __name__ == '__main__':
     parser.add_argument("--simpleoptim", default=False)
     parser.add_argument("--clip", default=1)
 
-    parser.add_argument("--gpus", default="3")
+    parser.add_argument("--gpus", default="0")
     parser.add_argument("--logging_steps", default=100)
     parser.add_argument("--temperature",default=16,type=int)
     args = parser.parse_args()
