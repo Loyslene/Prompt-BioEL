@@ -77,7 +77,7 @@ class DualEncoder(nn.Module):
         mention_embeds = mention_embeds.unsqueeze(1)
         logits = torch.matmul(mention_embeds,
                               candidates_embeds.transpose(1, 2)).view(B, -1)
-        loss = self.loss_fct(logits, passages_labels)
+        loss = self.loss_fct(logits, passages_labels.float())
 
         return loss, logits
 

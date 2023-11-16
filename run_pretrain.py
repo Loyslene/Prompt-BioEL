@@ -2,7 +2,7 @@ import argparse
 import os
 # os.environ['CUDA_VISIBLE_DEVICES'] = "2"
 import torch
-from transformers import BertTokenizer,  \
+from transformers import RobertaTokenizer,  \
     get_linear_schedule_with_warmup, get_constant_schedule
 import numpy as np
 from data_pretrain import load_entities,get_mention_loader,PretrainDataset
@@ -34,7 +34,7 @@ def load_model(is_init, device, tokenizer, args):
     if not is_init:
         state_dict = torch.load(args.model) if device.type == 'cuda' else \
             torch.load(args.model, map_location=torch.device('cpu'))
-        model.load_state_dict(state_dict['sd'])
+        model.load_state_dict(state_dict['sd'], strict=False)
     return model
 
 
@@ -117,8 +117,8 @@ def train(args):
     entities = load_entities(args.dataset + args.kb_path)
     # logger.log('number of entities {:d}'.format(len(entities)))
 
-    tokenizer = BertTokenizer.from_pretrained(args.pretrained_model)
-    special_tokens = ["[E1]", "[/E1]", '[or]', "[NIL]"]
+    tokenizer = RobertaTokenizer.from_pretrained(args.pretrained_model)
+    special_tokens = ["<txcla>", '[or]', "[NIL]"]
     sel_tokens = [f"[info{i}]" for i in range(args.cand_num)]
     special_tokens += sel_tokens
     tokenizer.add_special_tokens({'additional_special_tokens': special_tokens})
@@ -240,9 +240,9 @@ if __name__ == '__main__':
     parser.add_argument("--dataset",
                         default="dataset/bc5cdr/")
     parser.add_argument("--model",
-                        default="model_pretrain/bc5cdr_pretrain.pt")
+                        default="model_pretrain/shc_rob_pretrain.pt")
     parser.add_argument("--pretrained_model",
-                        default="cambridgeltl/SapBERT-from-PubMedBERT-fulltext")
+                        default="iHealthGroup/shc-cn-roberta-lm")
     parser.add_argument("--type_loss", type=str,
                         default="sum_log_nce",
                         choices=["log_sum", "sum_log", "sum_log_nce",
