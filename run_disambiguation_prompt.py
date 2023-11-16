@@ -282,7 +282,7 @@ if __name__ == '__main__':
   parser.add_argument("--model",
                       default="model_disambiguation/ncbi_disambiguation_prompt_pretrain.pt")
   parser.add_argument("--pretrained_model",
-                      default="cambridgeltl/SapBERT-from-PubMedBERT-fulltext")
+                      default="iHealthGroup/shc-cn-roberta-lm")
   parser.add_argument("--use_pretrained_model", action="store_true")
   parser.add_argument("--pretrained_model_path",
                       default="model_pretrain/bc5cdr_pretrain.pt")
