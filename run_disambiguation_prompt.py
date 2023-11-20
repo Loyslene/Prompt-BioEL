@@ -278,14 +278,14 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
 
   parser.add_argument("--dataset",
-                      default="dataset/ncbi-disease/")
+                      default="dataset/ds_shc/")
   parser.add_argument("--model",
-                      default="model_disambiguation/ncbi_disambiguation_prompt_pretrain.pt")
+                      default="model_disambiguation/shc_rob_disambiguation_prompt_pretrain.pt")
   parser.add_argument("--pretrained_model",
                       default="iHealthGroup/shc-cn-roberta-lm")
   parser.add_argument("--use_pretrained_model", action="store_true")
   parser.add_argument("--pretrained_model_path",
-                      default="model_pretrain/bc5cdr_pretrain.pt")
+                      default="model_pretrain/shc_rob_pretrain.pt")
 
   parser.add_argument("--type_loss", type=str,
                       default="sum_log_nce",

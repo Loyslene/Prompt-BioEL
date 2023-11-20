@@ -12,7 +12,7 @@ from torch import nn
 from data_retriver import *
 from utils import Logger
 from retriver import DualEncoder, SimpleEncoder
-from transformers import BertTokenizer, BertModel, \
+from transformers import RobertaTokenizer, RobertaModel, \
     get_linear_schedule_with_warmup, get_constant_schedule
 from torch.optim import AdamW
 
@@ -34,8 +34,8 @@ def strtime(datetime_checkpoint):
 
 def load_model(is_init, device, type_loss, tokenizer, args):
     if args.use_Dual_encoder:
-        ctxt_bert = BertModel.from_pretrained(args.pretrained_model)
-        cand_bert = BertModel.from_pretrained(args.pretrained_model)
+        ctxt_bert = RobertaModel.from_pretrained(args.pretrained_model)
+        cand_bert = RobertaModel.from_pretrained(args.pretrained_model)
 
         if is_init:
             model = DualEncoder(ctxt_bert, cand_bert, type_loss)
@@ -47,9 +47,9 @@ def load_model(is_init, device, type_loss, tokenizer, args):
             model = DualEncoder(ctxt_bert, cand_bert, type_loss)
             model.entity_encoder.resize_token_embeddings(tokenizer.vocab_size + 10)
             model.mention_encoder.resize_token_embeddings(tokenizer.vocab_size + 10)
-            model.load_state_dict(state_dict['sd'])
+            model.load_state_dict(state_dict['sd'], strict=False)
     else:
-        bert = BertModel.from_pretrained(args.pretrained_model)
+        bert = RobertaModel.from_pretrained(args.pretrained_model)
         if is_init:
             model = SimpleEncoder(bert, type_loss)
             model.encoder.resize_token_embeddings(tokenizer.vocab_size + 10)
@@ -58,7 +58,7 @@ def load_model(is_init, device, type_loss, tokenizer, args):
                 torch.load(args.model, map_location=torch.device('cpu'))
             model = SimpleEncoder(bert, type_loss)
             model.encoder.resize_token_embeddings(tokenizer.vocab_size + 10)
-            model.load_state_dict(state_dict['sd'])
+            model.load_state_dict(state_dict['sd'], strict=False)
 
     return model
 
@@ -93,8 +93,8 @@ def generate(samples_train, samples_val, samples_test, args):
     entities = load_entities(args.dataset + args.kb_path)
     logger.log('number of entities {:d}'.format(len(entities)))
 
-    tokenizer = BertTokenizer.from_pretrained(args.pretrained_model)
-    special_tokens = ["[E1]", "[/E1]", '[c]', "[NIL]"]
+    tokenizer = RobertaTokenizer.from_pretrained(args.pretrained_model)
+    special_tokens = ["<txcla>", '[or]', "[NIL]"]
     tokenizer.add_special_tokens({'additional_special_tokens': special_tokens})
 
     train_men_loader = get_mention_loader(samples_train, args.max_len, tokenizer, args.mention_bsz)
@@ -169,12 +169,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--dataset",
-                        default="dataset/ncbi-disease/")
+                        default="dataset/ds_shc/")
     parser.add_argument('--model',
-                        default="model_retriever/ncbi_retriever.pt",
+                        default="model_retriever/shc_rob_retriever.pt",
                         help='model path')
     parser.add_argument("--pretrained_model",
-                        default="cambridgeltl/SapBERT-from-PubMedBERT-fulltext")
+                        default="iHealthGroup/shc-cn-roberta-lm")
 
     parser.add_argument('--type_loss', type=str,
                         default="sum_log_nce",
@@ -182,9 +182,9 @@ if __name__ == '__main__':
                                  'max_min'],
                         help='type of multi-label loss ?')
 
-    parser.add_argument('--max_len', type=int, default=256,
+    parser.add_argument('--max_len', type=int, default=128,
                         help='max length of the mention input ')
-    parser.add_argument("--use_Dual_encoder", default=False)
+    parser.add_argument("--use_Dual_encoder", default=True)
     parser.add_argument("--train_data", default="disambiguation_input/train.json")
     parser.add_argument("--dev_data", default="disambiguation_input/dev.json")
     parser.add_argument("--test_data", default="disambiguation_input/test.json")
@@ -208,7 +208,7 @@ if __name__ == '__main__':
                         help='the batch size')
     parser.add_argument('--entity_bsz', type=int, default=128,
                         help='the batch size')
-    parser.add_argument('--use_gpu_index', default=True,
+    parser.add_argument('--use_gpu_index', default=False,
                         help='use gpu index?')
 
     args = parser.parse_args()

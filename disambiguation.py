@@ -1,8 +1,8 @@
 import torch
 from torch import nn
 from torch.nn import Linear
-from transformers import BertModel, BertConfig, BertTokenizer
-from transformers.models.bert.modeling_bert import BertOnlyMLMHead
+from transformers import RobertaModel, RobertaConfig, RobertaTokenizer
+from transformers.models.roberta.modeling_roberta import RobertaLMHead
 from transformers import BertForQuestionAnswering
 from loss import MultiLabelLoss
 
@@ -12,12 +12,12 @@ class PromptEncoder(nn.Module):
         super(PromptEncoder, self).__init__()
         self.device = device
         self.loss_fnc = torch.nn.functional.binary_cross_entropy_with_logits
-        bert_config = BertConfig.from_pretrained(pretrained_model)
-        bert_config.vocab_size = bert_config.vocab_size + 20
-        self.model = BertModel.from_pretrained(pretrained_model)
-        self.tokenizer = BertTokenizer.from_pretrained(pretrained_model)
+        roberta_config = RobertaConfig.from_pretrained(pretrained_model)
+        roberta_config.vocab_size = roberta_config.vocab_size + 20
+        self.model = RobertaModel.from_pretrained(pretrained_model)
+        self.tokenizer = RobertaTokenizer.from_pretrained(pretrained_model)
         self.model.resize_token_embeddings(self.tokenizer.vocab_size + 20)
-        self.cls = BertOnlyMLMHead(bert_config)
+        self.cls = RobertaLMHead(roberta_config)
 
     def forward(self, input_ids, attention_mask, ans_pos, choice_label, labels, op="train"):
         outputs = self.model(input_ids, attention_mask)

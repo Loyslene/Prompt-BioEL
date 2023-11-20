@@ -89,8 +89,8 @@ def eval(samples_test, args):
     entities = load_entities(args.dataset + args.kb_path)
     logger.log('number of entities {:d}'.format(len(entities)))
 
-    tokenizer = BertTokenizer.from_pretrained(args.pretrained_model)
-    special_tokens = ["[E1]", "[/E1]", '[or]', "[NIL]"]
+    tokenizer = RobertaTokenizer.from_pretrained(args.pretrained_model)
+    special_tokens = ["<txcla>", '[or]', "[NIL]"]
     sel_tokens = [f"[{i}]" for i in range(args.cand_num)]
     special_tokens += sel_tokens
     tokenizer.add_special_tokens({'additional_special_tokens': special_tokens})
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     parser.add_argument("--model",
                         default="model_disambiguation/bc5cdr_disambiguation_prompt_pretrain.pt")
     parser.add_argument("--pretrained_model",
-                        default="cambridgeltl/SapBERT-from-PubMedBERT-fulltext")
+                        default="iHealthGroup/shc-cn-roberta-lm")
     parser.add_argument("--use_pretrained_model" ,
                         action="store_true")
     parser.add_argument("--pretrained_model_path",

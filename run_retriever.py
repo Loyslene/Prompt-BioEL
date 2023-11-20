@@ -58,7 +58,7 @@ def load_model(is_init, device, type_loss, tokenizer, args):
         torch.load(args.model, map_location=torch.device('cpu'))
       model = SimpleEncoder(bert, type_loss)
       model.encoder.resize_token_embeddings(tokenizer.vocab_size + 10)
-      model.load_state_dict(state_dict['sd'])
+      model.load_state_dict(state_dict['sd'], strict=False)
 
   return model
 
@@ -148,7 +148,7 @@ def train(samples_train, samples_val, samples_test, args):
   if args.resume_training:
     cpt = torch.load(args.model) if device.type == 'cuda' \
       else torch.load(args.model, map_location=torch.device('cpu'))
-    model.load_state_dict(cpt['sd'])
+    model.load_state_dict(cpt['sd'], strict=False)
     optimizer.load_state_dict(cpt['opt_sd'])
     scheduler.load_state_dict(cpt['scheduler_sd'])
     best_val_perf = cpt['perf']
@@ -429,7 +429,7 @@ if __name__ == '__main__':
                       help='GPUs separated by comma [%(default)s]')
   parser.add_argument('--rands_ratio', default=0.9, type=float,
                       help='the ratio of random candidates and hard')
-  parser.add_argument('--num_cands', default=2, type=int,
+  parser.add_argument('--num_cands', default=6, type=int,
                       help='the total number of candidates')
   parser.add_argument('--mention_bsz', type=int, default=2,
                       help='the batch size')

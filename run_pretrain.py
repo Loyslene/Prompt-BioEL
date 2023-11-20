@@ -238,7 +238,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--dataset",
-                        default="dataset/bc5cdr/")
+                        default="/dataset/ds_shc/")
     parser.add_argument("--model",
                         default="model_pretrain/shc_rob_pretrain.pt")
     parser.add_argument("--pretrained_model",
@@ -247,14 +247,14 @@ if __name__ == '__main__':
                         default="sum_log_nce",
                         choices=["log_sum", "sum_log", "sum_log_nce",
                                  "max_min","bce_loss"])
-    parser.add_argument("--max_length", default=256)
+    parser.add_argument("--max_length", default=128)
 
 
     parser.add_argument("--kb_path", default="entity_kb.json")
 
-    parser.add_argument("--batch", default=64)
+    parser.add_argument("--batch", default=1)
     parser.add_argument("--lr", default=5e-6,type=float)
-    parser.add_argument("--epochs", default=10,type=int)
+    parser.add_argument("--epochs", default=1,type=int)
     parser.add_argument("--cand_num", default=6)
     parser.add_argument("--warmup_proportion", default=0.2)
     parser.add_argument("--weight_decay", default=0.01)
